@@ -41,6 +41,12 @@
   color: #888;
 }
 
+.react-logo {
+  height: 40vmin;
+  width: 40vmin;
+  pointer-events: none;
+}
+
 .shopping-cart-image {
   width: 200px;
   height: auto;
