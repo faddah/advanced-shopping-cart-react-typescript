@@ -20,13 +20,14 @@
     },
     "peacock.color": "#007acc",
     "cSpell.words": [
-        "rgba",
         "Avenir",
         "grayscale",
+        "lightcyan",
         "lightskyblue",
         "njsproj",
         "ntvs",
         "powderblue",
+        "rgba",
         "vmin"
     ]
 }
