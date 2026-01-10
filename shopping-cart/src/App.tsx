@@ -1,6 +1,10 @@
 import './App.css'
-import reactLogo from './assets/react.svg'
-import "bootstrap/dist/css/bootstrap.min.css";
+// import reactLogo from './assets/react.svg'
+import { Routes, Route } from "react-router-dom";
+import { Container } from "react-bootstrap";
+import { Home } from "./pages/Home";
+import { Store } from "./pages/Store";
+import { About } from "./pages/About";
 
 function App() {
   return (
