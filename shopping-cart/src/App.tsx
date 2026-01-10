@@ -1,5 +1,6 @@
 import './App.css'
 import reactLogo from './assets/react.svg'
+import "bootstrap/dist/css/bootstrap.min.css";
 
 function App() {
   return (
