@@ -47,12 +47,26 @@
 }
 
 .react-logo {
-  height: 40vmin;
-  width: 40vmin;
+  animation: logo-spin infinite 20s linear;
+  background-color: white !important;
+  border: 3px solid navy;
+  border-radius: 40vmin;
+  box-shadow: 0 0 1rem darkblue;
+  height: 20vmin;
+  width: 20vmin;
+  margin: 0.5rem 0;
+  padding: 0.5rem;
   pointer-events: none;
 }
 
 .shopping-cart-image {
+  animation: logo-spin infinite 20s linear;
+  background-color: transparent !important;
+  border: 3px solid navy;
+  border-radius: 40vmin;
+  box-shadow: 0 0 1rem darkblue;
   width: 200px;
   height: auto;
+  margin-top: 2rem;
+  pointer-events: none;
 }
