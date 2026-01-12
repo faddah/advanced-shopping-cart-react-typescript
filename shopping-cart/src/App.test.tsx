@@ -366,9 +366,9 @@ describe('NavBar Component', () => {
     expect(cartButton).toBeInTheDocument()
     expect(cartButton).toHaveTextContent('1')
 
-    // Add second item
+    // Add second item - click index 1 to add a different item
     const updatedAddButtons = screen.getAllByRole('button', { name: /add to cart/i })
-    await user.click(updatedAddButtons[0])
+    await user.click(updatedAddButtons[1])
 
     // Check that cart badge shows "2"
     cartButton = screen.getByRole('button', { name: /view cart/i })
@@ -462,8 +462,8 @@ describe('NavBar Component', () => {
     expect(cartButton).toHaveTextContent('1')
 
     // Add second item (quantity 1) - click index 1 to add a different item
-    const updatedAddButtons1 = screen.getAllByRole('button', { name: /add to cart/i })
-    await user.click(updatedAddButtons1[1])
+    const updatedAddButtons = screen.getAllByRole('button', { name: /add to cart/i })
+    await user.click(updatedAddButtons[1])
 
     // Cart badge should show "2"
     cartButton = screen.getByRole('button', { name: /view cart/i })
