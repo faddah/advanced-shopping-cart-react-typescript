@@ -14,20 +14,20 @@ const renderWithRouter = (initialRoute = '/') => {
 
 describe('App', () => {
   it('renders the heading "Shopping Cart Application"', () => {
-    render(<App />)
+    renderWithRouter()
     const heading = screen.getByRole('heading', { name: /shopping cart application/i })
     expect(heading).toBeInTheDocument()
   })
 
   it('renders the React logo image', () => {
-    render(<App />)
+    renderWithRouter()
     const reactLogo = screen.getByAltText(/react\.js logo graphic/i)
     expect(reactLogo).toBeInTheDocument()
     expect(reactLogo).toHaveClass('react-logo')
   })
 
   it('renders the shopping cart image', () => {
-    render(<App />)
+    renderWithRouter()
     const shoppingCartImage = screen.getByAltText(/shopping cart picture/i)
     expect(shoppingCartImage).toBeInTheDocument()
     expect(shoppingCartImage).toHaveClass('shopping-cart-image')
@@ -35,7 +35,7 @@ describe('App', () => {
   })
 
   it('renders the main App container', () => {
-    const { container } = render(<App />)
+    const { container } = renderWithRouter()
     const appDiv = container.querySelector('.App')
     expect(appDiv).toBeInTheDocument()
   })
