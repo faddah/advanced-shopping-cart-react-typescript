@@ -3,6 +3,7 @@ import { NavLink } from "react-router-dom";
 import { useShoppingCart } from "../context/ShoppingCartContext";
 
 export function NavBar() {
+    const { cartQuantity } = useShoppingCart();
     return ( 
         <Navbar sticky="top" className="bg-white shadow-sm mb-3">
             <Container>
