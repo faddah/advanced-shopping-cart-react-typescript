@@ -55,3 +55,12 @@ describe('Store Page', () => {
     expect(addButtons.length).toBeGreaterThan(0)
   })
 })
+
+// TODO Please write me more tests for the Store page that tests each "+ Add to Cart" buttons 
+/* functionality and cart item updates, and also tests the "+" and "-" buttons in the cart
+to see that they increment and decrement the cart item quantities correctly. Please also
+test the "Remove" button to see that it removes the item(s) from the cart. */
+
+
+
+// TODO: Add more tests for other routes, components, and interactions as needed
