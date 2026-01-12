@@ -10,14 +10,16 @@ import { About } from "./pages/About";
 
 function App() {
   return <>
-  <NavBar />
-  <Container>
-    <Routes>
-      <Route path="/" element={<Home/>} />
-      <Route path="/store" element={<Store/>} /> 
-      <Route path="/about" element={<About/>} /> 
-    </Routes>
-  </Container>
+    <ShoppingCartProvider>
+    <NavBar />
+      <Container>
+        <Routes>
+          <Route path="/" element={<Home/>} />
+          <Route path="/store" element={<Store/>} /> 
+          <Route path="/about" element={<About/>} /> 
+        </Routes>
+      </Container>
+    </ShoppingCartProvider>
   </>
 }
 
