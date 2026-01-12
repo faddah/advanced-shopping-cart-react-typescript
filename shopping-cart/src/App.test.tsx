@@ -319,7 +319,7 @@ describe('NavBar Component', () => {
 
   it('renders the NavBar component', () => {
     renderWithRouter()
-    const navbar = document.querySelector('.navbar')
+    const navbar = screen.getByRole('navigation')
     expect(navbar).toBeInTheDocument()
   })
 
@@ -461,9 +461,9 @@ describe('NavBar Component', () => {
     let cartButton = screen.getByRole('button', { name: /view cart/i })
     expect(cartButton).toHaveTextContent('1')
 
-    // Add second item (quantity 1)
+    // Add second item (quantity 1) - click index 1 to add a different item
     const updatedAddButtons1 = screen.getAllByRole('button', { name: /add to cart/i })
-    await user.click(updatedAddButtons1[0])
+    await user.click(updatedAddButtons1[1])
 
     // Cart badge should show "2"
     cartButton = screen.getByRole('button', { name: /view cart/i })
@@ -486,9 +486,6 @@ describe('NavBar Component', () => {
     expect(cartButton).toHaveTextContent('4')
   })
 })
-
-// TODO: Please add tests for rendering the NavBar component and its cart quantity badge.
-
 
 
 // TODO: Please add tests for clicking on each of the links and Shopping Cart button
