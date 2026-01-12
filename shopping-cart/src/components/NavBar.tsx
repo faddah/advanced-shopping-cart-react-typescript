@@ -12,8 +12,9 @@ export function NavBar() {
                     <Nav.Link to="/store" as={NavLink}>Store</Nav.Link>
                     <Nav.Link to="/about" as={NavLink}>About</Nav.Link>
                 </Nav>
-                <Button
-                    style={{ width: "3rem", height: "3rem", position: "relative" }}
+                {cartQuantity > 0 && (
+                    <Button
+                        style={{ width: "3rem", height: "3rem", position: "relative" }}
                     variant="outline-primary"
                     className="rounded-circle"
                     onClick={openCart}
@@ -38,6 +39,7 @@ export function NavBar() {
                         {cartQuantity}
                     </div>
                 </Button>
+                )}
             </Container>
         </Navbar>
     );
