@@ -56,93 +56,50 @@ describe('Store Page', () => {
     expect(addButtons.length).toBeGreaterThan(0)
   })
 
-  it('adds Book to cart when clicking its "+ Add To Cart" button', async () => {
+  // Helper function to test adding an item to cart
+  const testAddToCart = async (itemName: string) => {
     const user = userEvent.setup()
     renderWithRouter('/store')
     
-    // Find the Book item and its button
-    const bookHeading = screen.getByText('Book')
-    expect(bookHeading).toBeInTheDocument()
+    // Find the item and its button
+    const itemHeading = screen.getByText(itemName)
+    expect(itemHeading).toBeInTheDocument()
     
-    // Find the "+ Add To Cart" button for Book
-    const bookCard = bookHeading.closest('.card')
-    const addButton = bookCard?.querySelector('button')
+    // Find the "+ Add To Cart" button for the item
+    const itemCard = itemHeading.closest('.card')
+    expect(itemCard).not.toBeNull()
+    const addButton = itemCard!.querySelector('button')
+    expect(addButton).not.toBeNull()
     expect(addButton).toHaveTextContent(/add to cart/i)
     
     // Click the button
     await user.click(addButton!)
     
     // Verify the button text changed to show quantity controls
-    expect(screen.getByText(/in cart/)).toBeInTheDocument()
+    const quantityTexts = screen.getAllByText(/in cart/)
+    expect(quantityTexts.length).toBeGreaterThan(0)
     // Verify we see a "-" and "+" button
     const allButtons = screen.getAllByRole('button')
     const minusButtons = allButtons.filter(btn => btn.textContent === '-')
     const plusButtons = allButtons.filter(btn => btn.textContent === '+')
     expect(minusButtons.length).toBeGreaterThan(0)
     expect(plusButtons.length).toBeGreaterThan(0)
+  }
+
+  it('adds Book to cart when clicking its "+ Add To Cart" button', async () => {
+    await testAddToCart('Book')
   })
 
   it('adds Computer to cart when clicking its "+ Add To Cart" button', async () => {
-    const user = userEvent.setup()
-    renderWithRouter('/store')
-    
-    // Find the Computer item and its button
-    const computerHeading = screen.getByText('Computer')
-    expect(computerHeading).toBeInTheDocument()
-    
-    // Find the "+ Add To Cart" button for Computer
-    const computerCard = computerHeading.closest('.card')
-    const addButton = computerCard?.querySelector('button')
-    expect(addButton).toHaveTextContent(/add to cart/i)
-    
-    // Click the button
-    await user.click(addButton!)
-    
-    // Verify the button text changed to show quantity controls
-    const quantityTexts = screen.getAllByText(/in cart/)
-    expect(quantityTexts.length).toBeGreaterThan(0)
+    await testAddToCart('Computer')
   })
 
   it('adds Banana to cart when clicking its "+ Add To Cart" button', async () => {
-    const user = userEvent.setup()
-    renderWithRouter('/store')
-    
-    // Find the Banana item and its button
-    const bananaHeading = screen.getByText('Banana')
-    expect(bananaHeading).toBeInTheDocument()
-    
-    // Find the "+ Add To Cart" button for Banana
-    const bananaCard = bananaHeading.closest('.card')
-    const addButton = bananaCard?.querySelector('button')
-    expect(addButton).toHaveTextContent(/add to cart/i)
-    
-    // Click the button
-    await user.click(addButton!)
-    
-    // Verify the button text changed to show quantity controls
-    const quantityTexts = screen.getAllByText(/in cart/)
-    expect(quantityTexts.length).toBeGreaterThan(0)
+    await testAddToCart('Banana')
   })
 
   it('adds Car to cart when clicking its "+ Add To Cart" button', async () => {
-    const user = userEvent.setup()
-    renderWithRouter('/store')
-    
-    // Find the Car item and its button
-    const carHeading = screen.getByText('Car')
-    expect(carHeading).toBeInTheDocument()
-    
-    // Find the "+ Add To Cart" button for Car
-    const carCard = carHeading.closest('.card')
-    const addButton = carCard?.querySelector('button')
-    expect(addButton).toHaveTextContent(/add to cart/i)
-    
-    // Click the button
-    await user.click(addButton!)
-    
-    // Verify the button text changed to show quantity controls
-    const quantityTexts = screen.getAllByText(/in cart/)
-    expect(quantityTexts.length).toBeGreaterThan(0)
+    await testAddToCart('Car')
   })
 })
 
