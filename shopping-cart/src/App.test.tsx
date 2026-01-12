@@ -1,6 +1,16 @@
 import { describe, it, expect } from 'vitest'
 import { render, screen } from '@testing-library/react'
+import { MemoryRouter } from 'react-router-dom'
 import App from './App'
+
+// Helper function to render App with Router
+const renderWithRouter = (initialRoute = '/') => {
+  return render(
+    <MemoryRouter initialEntries={[initialRoute]}>
+      <App />
+    </MemoryRouter>
+  )
+}
 
 describe('App', () => {
   it('renders the heading "Shopping Cart Application"', () => {
