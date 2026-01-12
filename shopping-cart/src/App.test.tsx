@@ -310,7 +310,193 @@ describe('Store Page - Cart Functionality', () => {
   })
 })
 
-// TODO: Please add tests for rendering the NavBar component and its cart quantity badge.
+// NavBar component rendering tests
+describe('NavBar Component', () => {
+  // Clear localStorage before each test to ensure test isolation
+  beforeEach(() => {
+    localStorage.clear()
+  })
+
+  it('renders the NavBar component', () => {
+    renderWithRouter()
+    // NavBar should be present - we can check for navigation links
+    expect(screen.getByRole('link', { name: /home/i })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /store/i })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /about/i })).toBeInTheDocument()
+  })
+
+  it('renders Home, Store, and About navigation links', () => {
+    renderWithRouter()
+    const homeLink = screen.getByRole('link', { name: /home/i })
+    const storeLink = screen.getByRole('link', { name: /store/i })
+    const aboutLink = screen.getByRole('link', { name: /about/i })
+    
+    expect(homeLink).toBeInTheDocument()
+    expect(storeLink).toBeInTheDocument()
+    expect(aboutLink).toBeInTheDocument()
+  })
+
+  it('does not show cart button when cart is empty', () => {
+    renderWithRouter()
+    // Cart button should not be visible when cartQuantity is 0
+    const cartButton = screen.queryByRole('button', { name: /view cart/i })
+    expect(cartButton).not.toBeInTheDocument()
+  })
+
+  it('shows cart button when cart has items', async () => {
+    const user = userEvent.setup()
+    renderWithRouter('/store')
+    
+    // Add an item to cart
+    const addToCartButtons = screen.getAllByRole('button', { name: /add to cart/i })
+    await user.click(addToCartButtons[0])
+    
+    // Cart button should now be visible
+    const cartButton = screen.getByRole('button', { name: /view cart/i })
+    expect(cartButton).toBeInTheDocument()
+  })
+
+  it('displays correct quantity badge when 1 item is in cart', async () => {
+    const user = userEvent.setup()
+    renderWithRouter('/store')
+    
+    // Add an item to cart
+    const addToCartButtons = screen.getAllByRole('button', { name: /add to cart/i })
+    await user.click(addToCartButtons[0])
+    
+    // Cart button should show quantity badge with "1"
+    const cartButton = screen.getByRole('button', { name: /view cart/i })
+    expect(cartButton).toHaveTextContent('1')
+  })
+
+  it('displays correct quantity badge when multiple items are in cart', async () => {
+    const user = userEvent.setup()
+    renderWithRouter('/store')
+    
+    // Add first item to cart
+    const addToCartButtons = screen.getAllByRole('button', { name: /add to cart/i })
+    await user.click(addToCartButtons[0])
+    
+    // Increment first item to quantity 3
+    const incrementButton = screen.getAllByRole('button', { name: '+' })[0]
+    await user.click(incrementButton)
+    await user.click(incrementButton)
+    
+    // Add second item to cart
+    const updatedAddButtons = screen.getAllByRole('button', { name: /add to cart/i })
+    await user.click(updatedAddButtons[0])
+    
+    // Increment second item to quantity 2
+    const updatedIncrementButtons = screen.getAllByRole('button', { name: '+' })
+    await user.click(updatedIncrementButtons[1])
+    
+    // Cart button should show total quantity badge: 3 + 2 = 5
+    const cartButton = screen.getByRole('button', { name: /view cart/i })
+    expect(cartButton).toHaveTextContent('5')
+  })
+
+  it('updates quantity badge when items are added to cart', async () => {
+    const user = userEvent.setup()
+    renderWithRouter('/store')
+    
+    // Initially no cart button
+    expect(screen.queryByRole('button', { name: /view cart/i })).not.toBeInTheDocument()
+    
+    // Add first item
+    const addToCartButtons = screen.getAllByRole('button', { name: /add to cart/i })
+    await user.click(addToCartButtons[0])
+    
+    // Should show badge with "1"
+    let cartButton = screen.getByRole('button', { name: /view cart/i })
+    expect(cartButton).toHaveTextContent('1')
+    
+    // Add second item
+    const updatedAddButtons = screen.getAllByRole('button', { name: /add to cart/i })
+    await user.click(updatedAddButtons[0])
+    
+    // Should show badge with "2"
+    cartButton = screen.getByRole('button', { name: /view cart/i })
+    expect(cartButton).toHaveTextContent('2')
+  })
+
+  it('updates quantity badge when items are removed from cart', async () => {
+    const user = userEvent.setup()
+    renderWithRouter('/store')
+    
+    // Add two items
+    const addToCartButtons = screen.getAllByRole('button', { name: /add to cart/i })
+    await user.click(addToCartButtons[0])
+    
+    const updatedAddButtons = screen.getAllByRole('button', { name: /add to cart/i })
+    await user.click(updatedAddButtons[0])
+    
+    // Should show badge with "2"
+    let cartButton = screen.getByRole('button', { name: /view cart/i })
+    expect(cartButton).toHaveTextContent('2')
+    
+    // Remove first item
+    const removeButtons = screen.getAllByRole('button', { name: /remove/i })
+    await user.click(removeButtons[0])
+    
+    // Should show badge with "1"
+    cartButton = screen.getByRole('button', { name: /view cart/i })
+    expect(cartButton).toHaveTextContent('1')
+    
+    // Remove second item
+    const remainingRemoveButtons = screen.getAllByRole('button', { name: /remove/i })
+    await user.click(remainingRemoveButtons[0])
+    
+    // Cart button should not be visible anymore
+    expect(screen.queryByRole('button', { name: /view cart/i })).not.toBeInTheDocument()
+  })
+
+  it('updates quantity badge when item quantity is incremented', async () => {
+    const user = userEvent.setup()
+    renderWithRouter('/store')
+    
+    // Add an item
+    const addToCartButtons = screen.getAllByRole('button', { name: /add to cart/i })
+    await user.click(addToCartButtons[0])
+    
+    // Should show badge with "1"
+    let cartButton = screen.getByRole('button', { name: /view cart/i })
+    expect(cartButton).toHaveTextContent('1')
+    
+    // Increment item
+    const incrementButton = screen.getAllByRole('button', { name: '+' })[0]
+    await user.click(incrementButton)
+    
+    // Should show badge with "2"
+    cartButton = screen.getByRole('button', { name: /view cart/i })
+    expect(cartButton).toHaveTextContent('2')
+  })
+
+  it('updates quantity badge when item quantity is decremented', async () => {
+    const user = userEvent.setup()
+    renderWithRouter('/store')
+    
+    // Add an item and increment to quantity 3
+    const addToCartButtons = screen.getAllByRole('button', { name: /add to cart/i })
+    await user.click(addToCartButtons[0])
+    
+    const incrementButton = screen.getAllByRole('button', { name: '+' })[0]
+    await user.click(incrementButton)
+    await user.click(incrementButton)
+    
+    // Should show badge with "3"
+    let cartButton = screen.getByRole('button', { name: /view cart/i })
+    expect(cartButton).toHaveTextContent('3')
+    
+    // Decrement item
+    const decrementButton = screen.getByRole('button', { name: '-' })
+    await user.click(decrementButton)
+    
+    // Should show badge with "2"
+    cartButton = screen.getByRole('button', { name: /view cart/i })
+    expect(cartButton).toHaveTextContent('2')
+  })
+})
+
 // TODO: Please add tests for clicking on each of the links and Shopping Cart button
 // and seeing if they open and render each of their Pages Correctly.
 
