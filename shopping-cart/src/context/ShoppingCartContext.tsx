@@ -66,7 +66,6 @@ export function ShoppingCartProvider({ children }: ShoppingCartProviderProps) {
     };
     const removeFromCart = (id: number) =>
         setCartItems( currItems => currItems.filter(item => item.id !== id));
-    const cartQuantity = cartItems.reduce((quantity, item) => item.quantity + quantity, 0);  
 
     return (
         <ShoppingCartContext.Provider value={{
