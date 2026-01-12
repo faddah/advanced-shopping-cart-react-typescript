@@ -29,6 +29,9 @@ export function ShoppingCartProvider({ children }: ShoppingCartProviderProps) {
     const [isOpen, setIsOpen] = useState(false);
     const [cartItems, setCartItems] = useState<CartItem[]>([]);
 
+    const openCart = () => setIsOpen(true);
+    const closeCart = () => setIsOpen(false);
+    const cartQuantity = cartItems.reduce((quantity, item) => item.quantity + quantity, 0);  
     const getItemQuantity = (id: number) => 
         cartItems.find(item => item.id === id)?.quantity || 0;
     const increaseCartQuantity = (id: number) => {
