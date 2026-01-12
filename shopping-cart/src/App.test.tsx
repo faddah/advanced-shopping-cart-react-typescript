@@ -40,3 +40,18 @@ describe('App', () => {
     expect(appDiv).toBeInTheDocument()
   })
 })
+
+// Store page tests - navigate to /store route
+describe('Store Page', () => {
+  it('renders the Store page when navigating to /store', () => {
+    renderWithRouter('/store')
+    const heading = screen.getByRole('heading', { name: /welcome to the store page/i })
+    expect(heading).toBeInTheDocument()
+  })
+
+  it('renders the "Add to Cart" button on Store page', () => {
+    renderWithRouter('/store')
+    const addButtons = screen.getAllByRole('button', { name: /add to cart/i })
+    expect(addButtons.length).toBeGreaterThan(0)
+  })
+})
