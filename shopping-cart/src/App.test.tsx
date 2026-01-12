@@ -311,6 +311,9 @@ describe('Store Page - Cart Functionality', () => {
 })
 
 // TODO: Please add tests for rendering the NavBar component and its cart quantity badge.
+
+
+
 // TODO: Please add tests for clicking on each of the links and Shopping Cart button
 // and seeing if they open and render each of their Pages Correctly.
 
