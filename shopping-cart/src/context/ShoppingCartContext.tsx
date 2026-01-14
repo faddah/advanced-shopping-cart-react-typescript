@@ -10,7 +10,10 @@ import {
     type ShoppingCartContextType,
     assertShoppingCartContext,
     isValidId,
-    isValidProviderProps
+    isValidProviderProps,
+    validateContextValue,
+    logContextStructure,
+    hasValidContextMethodSignatures
 } from "../utilities/typeGuards";
 
 type ShoppingCartProviderProps = { children: React.ReactNode; }
