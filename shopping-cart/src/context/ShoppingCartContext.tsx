@@ -53,9 +53,12 @@ export function ShoppingCartProvider({ children }: ShoppingCartProviderProps) {
         isCartItemArray // Pass the type guard for validation
     );
 
-    const openCart = () => setIsOpen(true);
-    const closeCart = () => setIsOpen(false);
-    const cartQuantity = cartItems.reduce((quantity, item) => item.quantity + quantity, 0);
+    // Memoize context value to prevent unnecessary re-renders
+    // and validate structure before providing
+    const contextValue = useMemo<ShoppingCartContextType>(() => {
+        const openCart = () => setIsOpen(true);
+        const closeCart = () => setIsOpen(false);
+        const cartQuantity = cartItems.reduce((quantity, item) => item.quantity + quantity, 0);
 
     const getItemQuantity = (id: number) => {
         const item = findById(cartItems, id);
