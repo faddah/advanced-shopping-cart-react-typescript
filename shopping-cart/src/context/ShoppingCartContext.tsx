@@ -28,8 +28,13 @@ const ShoppingCartContext = createContext<ShoppingCartContext | undefined>(undef
  * This catches integration errors at the boundary
  */
 // eslint-disable-next-line react-refresh/only-export-components
-export function useShoppingCart() {
-    return useContext(ShoppingCartContext);
+export function useShoppingCart(): ShoppingCartContext {
+    const context = useContext(ShoppingCartContext);
+
+    // Type guard validation - catches usage outside provider
+    assertShoppingCartContext(context);
+
+    return context;
 }
 
 export function ShoppingCartProvider({ children }: ShoppingCartProviderProps) {
