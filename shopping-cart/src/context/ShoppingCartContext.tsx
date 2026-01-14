@@ -59,7 +59,14 @@ export function ShoppingCartProvider({ children }: ShoppingCartProviderProps) {
         // Type guard provides safe access to quantity
         return isDefined(item) ? item.quantity : 0;
     };
+
     const increaseCartQuantity = (id: number) => {
+        // Validate ID at the external boundary
+        if (!isValidId(id)) {
+            console.error(`Invalid ID passed to increaseCartQuantity: ${id}`);
+            return;
+        }
+
         setCartItems(currItems => {
             // Type guard for checking if item exists in cart
             if (!hasItemWithId(currItems, id)) {
