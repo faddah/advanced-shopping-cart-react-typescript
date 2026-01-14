@@ -294,3 +294,270 @@ export function isCartItemDefined(
 ): item is CartItem {
   return isDefined(item) && isCartItem(item);
 }
+
+// ============================================
+// External Boundary Type Guards (Context & Props)
+// ============================================
+
+/**
+ * Type guard to validate React Context has been properly initialized
+ * Checks if context value is not an empty object
+ */
+export function isContextInitialized<T extends object>(
+  context: T,
+  requiredKeys: (keyof T)[]
+): context is T {
+  // Check if context is not just an empty object
+  if (Object.keys(context).length === 0) {
+    return false;
+  }
+
+  // Check if all required keys exist in the context
+  for (const key of requiredKeys) {
+    if (!(key in context)) {
+      console.error(`Context missing required key: ${String(key)}`);
+      return false;
+    }
+  }
+
+  return true;
+}
+
+/**
+ * Type guard for ShoppingCart Context validation
+ * Validates that the context has all required methods and properties
+ */
+export interface ShoppingCartContextType {
+  openCart: () => void;
+  closeCart: () => void;
+  getItemQuantity: (id: number) => number;
+  increaseCartQuantity: (id: number) => void;
+  decreaseCartQuantity: (id: number) => void;
+  removeFromCart: (id: number) => void;
+  cartQuantity: number;
+  cartItems: CartItem[];
+}
+
+/**
+ * Type guard to check if a value is a valid ShoppingCartContext
+ */
+export function isShoppingCartContext(
+  value: unknown
+): value is ShoppingCartContextType {
+  if (typeof value !== 'object' || value === null) {
+    return false;
+  }
+
+  const context = value as ShoppingCartContextType;
+
+  return (
+    'openCart' in context &&
+    typeof context.openCart === 'function' &&
+    'closeCart' in context &&
+    typeof context.closeCart === 'function' &&
+    'getItemQuantity' in context &&
+    typeof context.getItemQuantity === 'function' &&
+    'increaseCartQuantity' in context &&
+    typeof context.increaseCartQuantity === 'function' &&
+    'decreaseCartQuantity' in context &&
+    typeof context.decreaseCartQuantity === 'function' &&
+    'removeFromCart' in context &&
+    typeof context.removeFromCart === 'function' &&
+    'cartQuantity' in context &&
+    typeof context.cartQuantity === 'number' &&
+    'cartItems' in context &&
+    Array.isArray(context.cartItems)
+  );
+}
+
+/**
+ * Asserts that ShoppingCartContext is properly initialized
+ * Throws a descriptive error if used outside provider
+ */
+export function assertShoppingCartContext(
+  context: unknown
+): asserts context is ShoppingCartContextType {
+  if (!isShoppingCartContext(context)) {
+    throw new Error(
+      'useShoppingCart must be used within ShoppingCartProvider. ' +
+      'Make sure your component is wrapped in <ShoppingCartProvider>.'
+    );
+  }
+}
+
+/**
+ * Type guard for StoreItem props validation
+ * Ensures props passed to StoreItem component are valid
+ */
+export interface StoreItemProps {
+  id: number;
+  name: string;
+  price: number;
+  imgUrl: string;
+}
+
+/**
+ * Validates StoreItem props at runtime
+ */
+export function isValidStoreItemProps(
+  props: unknown
+): props is StoreItemProps {
+  if (typeof props !== 'object' || props === null) {
+    console.error('StoreItem props must be an object');
+    return false;
+  }
+
+  const p = props as StoreItemProps;
+
+  if (!('id' in p) || typeof p.id !== 'number' || !Number.isInteger(p.id) || p.id <= 0) {
+    console.error('StoreItem props: id must be a positive integer');
+    return false;
+  }
+
+  if (!('name' in p) || typeof p.name !== 'string' || p.name.trim().length === 0) {
+    console.error('StoreItem props: name must be a non-empty string');
+    return false;
+  }
+
+  if (!('price' in p) || typeof p.price !== 'number' || p.price < 0) {
+    console.error('StoreItem props: price must be a non-negative number');
+    return false;
+  }
+
+  if (!('imgUrl' in p) || typeof p.imgUrl !== 'string' || p.imgUrl.trim().length === 0) {
+    console.error('StoreItem props: imgUrl must be a non-empty string');
+    return false;
+  }
+
+  return true;
+}
+
+/**
+ * Validates StoreItem props and throws if invalid
+ */
+export function validateStoreItemProps(props: unknown): StoreItemProps {
+  if (!isValidStoreItemProps(props)) {
+    throw new Error('Invalid StoreItem props. Check console for details.');
+  }
+  return props;
+}
+
+/**
+ * Type guard for React children prop
+ * Validates that children prop is valid React content
+ */
+export function isValidReactChildren(
+  children: unknown
+): children is React.ReactNode {
+  // React.ReactNode can be:
+  // - null, undefined (valid - renders nothing)
+  // - boolean (valid - renders nothing)
+  // - number, string (valid - renders as text)
+  // - React element (valid)
+  // - Array of any of the above (valid)
+
+  if (children === null || children === undefined) {
+    return true;
+  }
+
+  if (typeof children === 'boolean') {
+    return true;
+  }
+
+  if (typeof children === 'string' || typeof children === 'number') {
+    return true;
+  }
+
+  if (Array.isArray(children)) {
+    return true; // Assume array is valid ReactNode array
+  }
+
+  if (typeof children === 'object') {
+    return true; // Assume object is React element
+  }
+
+  return false;
+}
+
+/**
+ * Type guard for provider props validation
+ * Ensures provider receives valid children
+ */
+export interface ProviderProps {
+  children: React.ReactNode;
+}
+
+/**
+ * Validates provider props
+ */
+export function isValidProviderProps(props: unknown): props is ProviderProps {
+  if (typeof props !== 'object' || props === null) {
+    console.error('Provider props must be an object');
+    return false;
+  }
+
+  const p = props as ProviderProps;
+
+  if (!('children' in p)) {
+    console.error('Provider props must include children');
+    return false;
+  }
+
+  if (!isValidReactChildren(p.children)) {
+    console.error('Provider children must be valid React content');
+    return false;
+  }
+
+  return true;
+}
+
+/**
+ * Type guard to check if a numeric ID is valid
+ * Used at component boundaries to validate IDs from external sources
+ */
+export function isValidId(id: unknown): id is number {
+  return (
+    typeof id === 'number' &&
+    Number.isInteger(id) &&
+    id > 0 &&
+    Number.isFinite(id)
+  );
+}
+
+/**
+ * Validates and converts unknown ID to number
+ * Throws if ID is invalid
+ */
+export function validateId(id: unknown, context: string = 'ID'): number {
+  if (!isValidId(id)) {
+    throw new Error(
+      `${context} must be a positive integer, received: ${JSON.stringify(id)}`
+    );
+  }
+  return id;
+}
+
+/**
+ * Type guard for quantity values
+ * Ensures quantity is a valid positive integer
+ */
+export function isValidQuantity(quantity: unknown): quantity is number {
+  return (
+    typeof quantity === 'number' &&
+    Number.isInteger(quantity) &&
+    quantity > 0 &&
+    Number.isFinite(quantity)
+  );
+}
+
+/**
+ * Validates quantity value
+ */
+export function validateQuantity(quantity: unknown): number {
+  if (!isValidQuantity(quantity)) {
+    throw new Error(
+      `Quantity must be a positive integer, received: ${JSON.stringify(quantity)}`
+    );
+  }
+  return quantity;
+}
