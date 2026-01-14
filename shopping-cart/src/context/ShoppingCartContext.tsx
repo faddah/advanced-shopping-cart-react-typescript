@@ -107,8 +107,16 @@ export function ShoppingCartProvider({ children }: ShoppingCartProviderProps) {
             }
         });
     };
-    const removeFromCart = (id: number) =>
-        setCartItems( currItems => currItems.filter(item => item.id !== id));
+
+    const removeFromCart = (id: number) => {
+        // Validate ID at the external boundary
+        if (!isValidId(id)) {
+            console.error(`Invalid ID passed to removeFromCart: ${id}`);
+            return;
+        }
+
+        setCartItems(currItems => currItems.filter(item => item.id !== id));
+    };
 
     return (
         <ShoppingCartContext.Provider value={{
