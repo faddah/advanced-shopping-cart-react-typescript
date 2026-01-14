@@ -118,8 +118,7 @@ export function ShoppingCartProvider({ children }: ShoppingCartProviderProps) {
             setCartItems(currItems => currItems.filter(item => item.id !== id));
         };
 
-    return (
-        <ShoppingCartContext.Provider value={{
+        const value: ShoppingCartContextType = {
             openCart,
             closeCart,
             getItemQuantity,
@@ -128,7 +127,26 @@ export function ShoppingCartProvider({ children }: ShoppingCartProviderProps) {
             removeFromCart,
             cartQuantity,
             cartItems
-        }}>
+        };
+
+        // Validate context value structure in development
+        if (import.meta.env.DEV) {
+            if (!validateContextValue(value, 'ShoppingCartContext')) {
+                console.error('ShoppingCartProvider: Invalid context value created');
+            }
+
+            if (!hasValidContextMethodSignatures(value)) {
+                console.warn('ShoppingCartProvider: Method signatures may be incorrect');
+            }
+
+            logContextStructure(value, 'ShoppingCartContext');
+        }
+
+        return value;
+    }, [cartItems, setCartItems]);
+
+    return (
+        <ShoppingCartContext.Provider value={contextValue}>
             {children}
             <ShoppingCart isOpen={isOpen} />
         </ShoppingCartContext.Provider>
