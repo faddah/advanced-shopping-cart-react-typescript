@@ -22,5 +22,35 @@
         "name": "Car",
         "price": 14000,
         "imgUrl": "/imgs/car.png"
+    },
+    {
+        "id": 5,
+        "name": "Nicholas Cage Face Stamp",
+        "price":17.99,
+        "imgUrl": "/imgs/nicholas-cage-face-stamp.png"
+    },
+    {
+        "id": 6,
+        "name": "Oontz Solo Bluetooth Speaker",
+        "price": 19.99,
+        "imgUrl": "/imgs/oontz-solo-bluetooth-speaker.png"
+    },
+    {
+        "id": 7,
+        "name": "Sphero Star Wars BB8 App Enabled Droid",
+        "price": 129.99,
+        "imgUrl": "/imgs/sphero-star-wars-bb8-droid-toy.png"
+    },
+    {
+        "id": 8,
+        "name": "High-Powered Teelescope",
+        "price": 269.99,
+        "imgUrl": "/imgs/telescope.png"
+    },
+    {
+        "id": 9,
+        "name": "Video Camera Bird Feeder",
+        "price": 144.99,
+        "imgUrl": "/imgs/video-camera-bird-feeder.png"
     }
 ]
