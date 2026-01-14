@@ -6,7 +6,11 @@ import {
     type CartItem,
     findById,
     hasItemWithId,
-    isDefined
+    isDefined,
+    type ShoppingCartContextType,
+    assertShoppingCartContext,
+    isValidId,
+    isValidProviderProps
 } from "../utilities/typeGuards";
 
 type ShoppingCartProviderProps = { children: React.ReactNode; }
