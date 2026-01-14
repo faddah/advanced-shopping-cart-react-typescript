@@ -15,19 +15,18 @@ import {
 
 type ShoppingCartProviderProps = { children: React.ReactNode; }
 
-type ShoppingCartContext = {
-    openCart: () => void;
-    closeCart: () => void;
-    getItemQuantity: (id: number) => number;
-    increaseCartQuantity: (id: number) => void;
-    decreaseCartQuantity: (id: number) => void;
-    removeFromCart: (id: number) => void;
-    cartQuantity: number;
-    cartItems: CartItem[];
-}
+// Using the type from typeGuards for consistency
+type ShoppingCartContext = ShoppingCartContextType;
 
-const ShoppingCartContext = createContext({} as ShoppingCartContext);
+// Initialize context with undefined instead of empty object
+// This allows us to properly detect when context is used outside provider
+const ShoppingCartContext = createContext<ShoppingCartContext | undefined>(undefined);
 
+/**
+ * Hook to access ShoppingCart context with runtime validation
+ * Throws an error if used outside of ShoppingCartProvider
+ * This catches integration errors at the boundary
+ */
 // eslint-disable-next-line react-refresh/only-export-components
 export function useShoppingCart() {
     return useContext(ShoppingCartContext);
