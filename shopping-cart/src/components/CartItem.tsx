@@ -18,6 +18,8 @@ type CartItemProps = {
 export function CartItem(props: CartItemProps) {
     // Validate props at the component boundary
     const { id, quantity } = props;
+    
+    const { removeFromCart } = useShoppingCart();
 
     if (!isValidId(id)) {
         console.error('CartItem received invalid id:', id);
