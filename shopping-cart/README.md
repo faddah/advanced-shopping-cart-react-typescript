@@ -2,8 +2,7 @@
 
 [![WebDevSimplified's YouTube Video, How To Create An Advanced Shopping Cart With React and TypeScript.](http://i3.ytimg.com/vi/lATafp15HWA/hqdefault.jpg)](https://www.youtube.com/watch?v=lATafp15HWA)
 
-
-# React + TypeScript + Vite
+## React + TypeScript + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
