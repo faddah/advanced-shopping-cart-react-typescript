@@ -15,7 +15,7 @@ import {
     isStoreItemDefined,
     type StoreItem,
     type CartItem
-} from "./typeGuards";
+} from "./typeGuards.ts";
 
 // ============================================
 // Example 1: Basic isDefined Type Guard
