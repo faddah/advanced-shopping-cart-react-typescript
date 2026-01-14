@@ -9,7 +9,7 @@ import {
 // Using the validated type from typeGuards
 type StoreItemProps = ValidatedStoreItemProps;
 
-export function StoreItem({ id, name, price, imgUrl }: StoreItemProps) {
+export function StoreItem(props: StoreItemProps) {
     const {
         getItemQuantity,
         increaseCartQuantity,
