@@ -60,11 +60,10 @@ export function ShoppingCartProvider({ children }: ShoppingCartProviderProps) {
         const closeCart = () => setIsOpen(false);
         const cartQuantity = cartItems.reduce((quantity, item) => item.quantity + quantity, 0);
 
-    const getItemQuantity = (id: number) => {
-        const item = findById(cartItems, id);
-        // Type guard provides safe access to quantity
-        return isDefined(item) ? item.quantity : 0;
-    };
+        const getItemQuantity = (id: number) => {
+            const item = findById(cartItems, id);
+            return isDefined(item) ? item.quantity : 0;
+        };
 
     const increaseCartQuantity = (id: number) => {
         // Validate ID at the external boundary
