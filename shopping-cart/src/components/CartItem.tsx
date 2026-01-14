@@ -12,8 +12,14 @@ type CartItemProps = {
 
 export function CartItem({ id, quantity }: CartItemProps) {
     const { removeFromCart } = useShoppingCart();
-    const item = storeItems.find(i => i.id === id);
-    if (item == null) return null;
+    // Using type guard for better null safety
+    const item = findById(storeItems, id);
+
+    // isDefined type guard narrows the type properly
+    if (!isDefined(item)) {
+        console.warn(`StoreItem with id ${id} not found in cart`);
+        return null;
+    }
     return (
         <Stack direction="horizontal" gap={2} className="d-flex align-items-center">
             <img
