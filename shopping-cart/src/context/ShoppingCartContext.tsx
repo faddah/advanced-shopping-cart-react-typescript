@@ -92,8 +92,8 @@ export function ShoppingCartProvider({ children }: ShoppingCartProviderProps) {
                 return;
             }
 
-        setCartItems(currItems => {
-            const item = findById(currItems, id);
+            setCartItems(currItems => {
+                const item = findById(currItems, id);
 
                 if (isDefined(item) && item.quantity === 1) {
                     return currItems.filter(item => item.id !== id);
