@@ -436,7 +436,7 @@ export function example10_CompleteProviderPattern() {
         };
 
         // Validate before providing (development only)
-        if (process.env.NODE_ENV === 'development') {
+        if (import.meta.env.DEV) {
             // 1. Validate structure
             if (!validateContextValue(contextValue, 'MyContext')) {
                 throw new Error('Invalid context value structure');
