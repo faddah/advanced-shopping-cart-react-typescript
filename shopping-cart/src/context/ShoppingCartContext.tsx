@@ -82,7 +82,14 @@ export function ShoppingCartProvider({ children }: ShoppingCartProviderProps) {
             }
         });
     };
+
     const decreaseCartQuantity = (id: number) => {
+        // Validate ID at the external boundary
+        if (!isValidId(id)) {
+            console.error(`Invalid ID passed to decreaseCartQuantity: ${id}`);
+            return;
+        }
+
         setCartItems(currItems => {
             const item = findById(currItems, id);
 
