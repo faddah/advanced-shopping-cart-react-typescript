@@ -65,60 +65,55 @@ export function ShoppingCartProvider({ children }: ShoppingCartProviderProps) {
             return isDefined(item) ? item.quantity : 0;
         };
 
-    const increaseCartQuantity = (id: number) => {
-        // Validate ID at the external boundary
-        if (!isValidId(id)) {
-            console.error(`Invalid ID passed to increaseCartQuantity: ${id}`);
-            return;
-        }
-
-        setCartItems(currItems => {
-            // Type guard for checking if item exists in cart
-            if (!hasItemWithId(currItems, id)) {
-                return [...currItems, { id, quantity: 1}];
-            } else {
-                return currItems.map(item => {
-                    if (item.id === id) {
-                        return { ...item, quantity: item.quantity + 1 };
-                    } else {
-                        return item;
-                    }
-                });
+        const increaseCartQuantity = (id: number) => {
+            if (!isValidId(id)) {
+                console.error(`Invalid ID passed to increaseCartQuantity: ${id}`);
+                return;
             }
-        });
-    };
 
-    const decreaseCartQuantity = (id: number) => {
-        // Validate ID at the external boundary
-        if (!isValidId(id)) {
-            console.error(`Invalid ID passed to decreaseCartQuantity: ${id}`);
-            return;
-        }
+            setCartItems(currItems => {
+                if (!hasItemWithId(currItems, id)) {
+                    return [...currItems, { id, quantity: 1}];
+                } else {
+                    return currItems.map(item => {
+                        if (item.id === id) {
+                            return { ...item, quantity: item.quantity + 1 };
+                        } else {
+                            return item;
+                        }
+                    });
+                }
+            });
+        };
+
+        const decreaseCartQuantity = (id: number) => {
+            if (!isValidId(id)) {
+                console.error(`Invalid ID passed to decreaseCartQuantity: ${id}`);
+                return;
+            }
 
         setCartItems(currItems => {
             const item = findById(currItems, id);
 
-            // Type guard for safe quantity access
-            if (isDefined(item) && item.quantity === 1) {
-                return currItems.filter(item => item.id !== id);
-            } else {
-                return currItems.map(item => {
-                    if (item.id === id) {
-                        return { ...item, quantity: item.quantity - 1 };
-                    } else {
-                        return item;
-                    }
-                });
-            }
-        });
-    };
+                if (isDefined(item) && item.quantity === 1) {
+                    return currItems.filter(item => item.id !== id);
+                } else {
+                    return currItems.map(item => {
+                        if (item.id === id) {
+                            return { ...item, quantity: item.quantity - 1 };
+                        } else {
+                            return item;
+                        }
+                    });
+                }
+            });
+        };
 
-    const removeFromCart = (id: number) => {
-        // Validate ID at the external boundary
-        if (!isValidId(id)) {
-            console.error(`Invalid ID passed to removeFromCart: ${id}`);
-            return;
-        }
+        const removeFromCart = (id: number) => {
+            if (!isValidId(id)) {
+                console.error(`Invalid ID passed to removeFromCart: ${id}`);
+                return;
+            }
 
         setCartItems(currItems => currItems.filter(item => item.id !== id));
     };
