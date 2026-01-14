@@ -392,7 +392,7 @@ The type guards have been validated through:
 ### **When to Use Each Type Guard:**
 
 | Scenario | Use This | Example |
-|----------|----------|---------|
+| ---------- | ---------- | --------- |
 | General null check | `isDefined()` | `if (isDefined(item))` |
 | Readable existence check | `exists()` | `if (exists(item))` |
 | Early return pattern | `isNullish()` | `if (isNullish(item)) return;` |
