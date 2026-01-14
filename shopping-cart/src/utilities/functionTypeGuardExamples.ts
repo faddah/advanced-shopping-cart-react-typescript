@@ -28,6 +28,8 @@ export function example1_BasicFunctionCheck() {
     if (typeof value2 === 'function') {
         // TypeScript still treats this as generic Function
         const result = value2(); // Works but no strong typing
+        console.log(result);
+        
     }
 
     // WITH type guard
@@ -35,6 +37,12 @@ export function example1_BasicFunctionCheck() {
         // TypeScript knows this returns string
         const result = value2(); // ✅ Strongly typed as string
         return result.toUpperCase(); // ✅ String methods available
+    }
+
+    // value1 is a string, not a function, so this check will be false
+    if (isFunction<string>(value1)) {
+        // This block won't execute because value1 is "hello", not a function
+        console.log('This won\'t run');
     }
 }
 
@@ -110,7 +118,7 @@ export function example3b_CartUpdaterExample() {
         quantity: number;
     }
 
-    let cartItems: CartItem[] = [{ id: 1, quantity: 2 }];
+    const cartItems: CartItem[] = [{ id: 1, quantity: 2 }];
 
     // Direct update
     const newCart1 = example3_StateUpdater(cartItems, [
@@ -123,7 +131,7 @@ export function example3b_CartUpdaterExample() {
         { id: 2, quantity: 1 }
     ]);
 
-    console.log(newCart1, newCart2);
+    console.log(cartItems, newCart1, newCart2);
 }
 
 // ============================================
@@ -165,6 +173,8 @@ export function example4b_LocalStorageUsage() {
         console.log('Computing default cart...');
         return [];
     });
+
+    console.log(cart1, cart2);
 }
 
 // ============================================
@@ -286,11 +296,15 @@ export function example8_ResolveValue() {
     const config1 = typeof directConfig === 'function'
         ? directConfig()
         : directConfig;
+;
 
     // WITH helper - clean and simple
+    
     const config2 = resolveValue(directConfig);   // { timeout: 5000, retries: 3 }
     const config3 = resolveValue(lazyConfig);     // { timeout: 5000, retries: 3 }
 
+    console.log(config1);
+    
     console.log(config2, config3);
 }
 
@@ -314,13 +328,8 @@ export function example9_TypeGuardComposition<T>(
         return value(); // Returns Promise<T>
     }
 
-    // Must be sync function
-    if (isFunctionReturning<T>(value)) {
-        return value(); // Returns T
-    }
-
-    // Fallback (shouldn't reach here)
-    return value as T;
+    // Must be sync function - call it
+    return (value as () => T)(); // Returns T
 }
 
 // ============================================
