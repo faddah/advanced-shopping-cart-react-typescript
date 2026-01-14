@@ -561,3 +561,119 @@ export function validateQuantity(quantity: unknown): number {
   }
   return quantity;
 }
+
+// ============================================
+// Function Type Discrimination Type Guards
+// ============================================
+
+/**
+ * Type guard to check if a value is a function
+ * More type-safe than typeof check alone
+ *
+ * @example
+ * const value = someValue;
+ * if (isFunction(value)) {
+ *   value(); // TypeScript knows value is a function
+ * }
+ */
+export function isFunction<T = unknown>(
+  value: unknown
+): value is (...args: unknown[]) => T {
+  return typeof value === 'function';
+}
+
+/**
+ * Type guard to check if a value is a function that takes no parameters
+ * Used for lazy initialization patterns
+ *
+ * @example
+ * const initializer = () => ({ items: [] });
+ * if (isNullaryFunction(initializer)) {
+ *   const result = initializer(); // TypeScript knows it takes no args
+ * }
+ */
+export function isNullaryFunction<T>(
+  value: unknown
+): value is () => T {
+  return typeof value === 'function';
+}
+
+/**
+ * Type guard for discriminating between a value and a function that returns that value
+ * Common pattern in React hooks and lazy initialization
+ *
+ * @example
+ * function useState<T>(initial: T | (() => T)) {
+ *   if (isFunctionReturning<T>(initial)) {
+ *     return initial(); // TypeScript knows this is () => T
+ *   }
+ *   return initial; // TypeScript knows this is T
+ * }
+ */
+export function isFunctionReturning<T>(
+  value: T | (() => T)
+): value is () => T {
+  return typeof value === 'function';
+}
+
+/**
+ * Type guard for updater functions (common in React state setters)
+ * Discriminates between a direct value and an updater function
+ *
+ * @example
+ * function setCartItems(update: CartItem[] | ((prev: CartItem[]) => CartItem[])) {
+ *   if (isUpdaterFunction(update)) {
+ *     const newItems = update(currentItems);
+ *     // ...
+ *   } else {
+ *     const newItems = update;
+ *     // ...
+ *   }
+ * }
+ */
+export function isUpdaterFunction<T>(
+  value: T | ((prev: T) => T)
+): value is (prev: T) => T {
+  return typeof value === 'function';
+}
+
+/**
+ * Safely invokes a value that might be a function or a direct value
+ * Returns the result in either case
+ *
+ * @example
+ * const config = { timeout: 5000 };
+ * const lazyConfig = () => ({ timeout: 5000 });
+ *
+ * const result1 = resolveValue(config);      // { timeout: 5000 }
+ * const result2 = resolveValue(lazyConfig);  // { timeout: 5000 }
+ */
+export function resolveValue<T>(value: T | (() => T)): T {
+  if (isFunctionReturning<T>(value)) {
+    return value();
+  }
+  return value;
+}
+
+/**
+ * Type guard to distinguish between async and sync functions
+ */
+export function isAsyncFunction<T = unknown>(
+  value: unknown
+): value is (...args: unknown[]) => Promise<T> {
+  return (
+    typeof value === 'function' &&
+    value.constructor.name === 'AsyncFunction'
+  );
+}
+
+/**
+ * Type guard to check if a value is a class constructor
+ */
+export function isConstructor(value: unknown): value is new (...args: unknown[]) => unknown {
+  return (
+    typeof value === 'function' &&
+    value.prototype !== undefined &&
+    value.prototype.constructor === value
+  );
+}
