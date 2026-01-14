@@ -1,10 +1,34 @@
 import { useEffect, useState } from "react";
 
-export function useLocalStorage<T>(key: string, initialValue: T | (() => T)): [T, (value: T | ((val: T) => T)) => void] {
+// Type guard function that can be optionally passed to validate parsed data
+type TypeGuard<T> = (value: unknown) => value is T;
+
+export function useLocalStorage<T>(
+    key: string,
+    initialValue: T | (() => T),
+    typeGuard?: TypeGuard<T>
+): [T, (value: T | ((val: T) => T)) => void] {
     const [value, setValue] = useState<T>(() => {
         try {
             const jsonValue = localStorage.getItem(key);
-            if (jsonValue != null) return JSON.parse(jsonValue);
+            if (jsonValue != null) {
+                const parsed = JSON.parse(jsonValue);
+
+                // If a type guard is provided, validate the parsed data
+                if (typeGuard) {
+                    if (typeGuard(parsed)) {
+                        return parsed;
+                    } else {
+                        console.warn(
+                            `localStorage data for key "${key}" failed validation. Using initial value.`
+                        );
+                        // Fall through to return initialValue
+                    }
+                } else {
+                    // No type guard provided, return parsed data as-is
+                    return parsed;
+                }
+            }
 
             if (typeof initialValue === 'function') {
                 return (initialValue as () => T)();
