@@ -1,7 +1,13 @@
 import { createContext, useContext, useState } from "react";
 import { ShoppingCart } from "../components/ShoppingCart";
 import { useLocalStorage } from "../hooks/useLocalStorage";
-import { isCartItemArray, type CartItem } from "../utilities/typeGuards";
+import {
+    isCartItemArray,
+    type CartItem,
+    findById,
+    hasItemWithId,
+    isDefined
+} from "../utilities/typeGuards";
 
 type ShoppingCartProviderProps = { children: React.ReactNode; }
 
@@ -33,12 +39,17 @@ export function ShoppingCartProvider({ children }: ShoppingCartProviderProps) {
 
     const openCart = () => setIsOpen(true);
     const closeCart = () => setIsOpen(false);
-    const cartQuantity = cartItems.reduce((quantity, item) => item.quantity + quantity, 0);  
-    const getItemQuantity = (id: number) => 
-        cartItems.find(item => item.id === id)?.quantity || 0;
+    const cartQuantity = cartItems.reduce((quantity, item) => item.quantity + quantity, 0);
+
+    const getItemQuantity = (id: number) => {
+        const item = findById(cartItems, id);
+        // Type guard provides safe access to quantity
+        return isDefined(item) ? item.quantity : 0;
+    };
     const increaseCartQuantity = (id: number) => {
         setCartItems(currItems => {
-            if (currItems.find(item => item.id === id) == null) {
+            // Type guard for checking if item exists in cart
+            if (!hasItemWithId(currItems, id)) {
                 return [...currItems, { id, quantity: 1}];
             } else {
                 return currItems.map(item => {
@@ -53,7 +64,10 @@ export function ShoppingCartProvider({ children }: ShoppingCartProviderProps) {
     };
     const decreaseCartQuantity = (id: number) => {
         setCartItems(currItems => {
-            if (currItems.find(item => item.id === id)?.quantity === 1) {
+            const item = findById(currItems, id);
+
+            // Type guard for safe quantity access
+            if (isDefined(item) && item.quantity === 1) {
                 return currItems.filter(item => item.id !== id);
             } else {
                 return currItems.map(item => {
