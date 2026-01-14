@@ -115,8 +115,8 @@ export function ShoppingCartProvider({ children }: ShoppingCartProviderProps) {
                 return;
             }
 
-        setCartItems(currItems => currItems.filter(item => item.id !== id));
-    };
+            setCartItems(currItems => currItems.filter(item => item.id !== id));
+        };
 
     return (
         <ShoppingCartContext.Provider value={{
