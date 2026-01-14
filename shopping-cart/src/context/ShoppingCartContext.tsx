@@ -5,11 +5,6 @@ import { isCartItemArray, type CartItem } from "../utilities/typeGuards";
 
 type ShoppingCartProviderProps = { children: React.ReactNode; }
 
-type CartItem = {
-    id: number;
-    quantity: number;
-}
-
 type ShoppingCartContext = {
     openCart: () => void;
     closeCart: () => void;
