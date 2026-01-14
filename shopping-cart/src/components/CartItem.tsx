@@ -3,7 +3,12 @@ import storeItems from "../data/storeItems";
 import { Button, Stack } from "react-bootstrap";
 import { useShoppingCart } from "../context/ShoppingCartContext";
 import { formatCurrency } from "../utilities/formatCurrency";
-import { findById, isDefined } from "../utilities/typeGuards";
+import {
+    findById,
+    isDefined,
+    isValidId,
+    isValidQuantity
+} from "../utilities/typeGuards";
 
 type CartItemProps = {
     id: number;
