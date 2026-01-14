@@ -3,6 +3,7 @@ import { useShoppingCart } from "../context/ShoppingCartContext";
 import { CartItem } from "../components/CartItem";
 import storeItems from "../data/storeItems";
 import { formatCurrency } from "../utilities/formatCurrency";
+import { findById, isDefined } from "../utilities/typeGuards";
 
 type ShoppingCartProps = {
     isOpen: boolean;
@@ -11,8 +12,15 @@ type ShoppingCartProps = {
 export function ShoppingCart({ isOpen }: ShoppingCartProps) {
     const { closeCart, cartItems } = useShoppingCart();
     const total = cartItems.reduce((total, cartItem) => {
-        const item = storeItems.find(i => i.id === cartItem.id);
-        return total + (item?.price || 0) * cartItem.quantity;
+        const item = findById(storeItems, cartItem.id);
+
+        // Type guard ensures type safety - only add price if item exists
+        if (!isDefined(item)) {
+            console.warn(`StoreItem with id ${cartItem.id} not found when calculating total`);
+            return total; // Skip items not found
+        }
+
+        return total + item.price * cartItem.quantity;
     }, 0);
     return (
         <Offcanvas show={isOpen} onHide={closeCart} placement="end">
