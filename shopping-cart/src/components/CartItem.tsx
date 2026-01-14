@@ -30,8 +30,6 @@ export function CartItem(props: CartItemProps) {
         console.error('CartItem received invalid quantity:', quantity);
         return null;
     }
-
-    const { removeFromCart } = useShoppingCart();
     // Using type guard for better null safety
     const item = findById(storeItems, id);
 
