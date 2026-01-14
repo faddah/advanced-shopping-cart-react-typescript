@@ -31,9 +31,12 @@ export function useLocalStorage<T>(
                 }
             }
 
-            if (typeof initialValue === 'function') {
-                return (initialValue as () => T)();
+            // Use type guard instead of type assertion
+            if (isFunctionReturning<T>(initialValue)) {
+                // TypeScript knows initialValue is () => T here
+                return initialValue();
             } else {
+                // TypeScript knows initialValue is T here
                 return initialValue;
             }
         } catch (error) {
