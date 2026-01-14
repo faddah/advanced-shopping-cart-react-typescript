@@ -137,3 +137,160 @@ export function validateStoreItems(items: unknown): StoreItem[] {
   }
   return items;
 }
+
+// ============================================
+// Optional Value Type Guards (for .find() operations)
+// ============================================
+
+/**
+ * Generic type guard to check if a value is not null or undefined
+ * This is useful for narrowing types after .find() operations
+ *
+ * @example
+ * const item = items.find(i => i.id === 1);
+ * if (isDefined(item)) {
+ *   // TypeScript now knows item is not undefined
+ *   console.log(item.name);
+ * }
+ */
+export function isDefined<T>(value: T | null | undefined): value is T {
+  return value !== null && value !== undefined;
+}
+
+/**
+ * Type guard specifically for checking if a value exists (not null/undefined)
+ * Alias for isDefined with a more semantic name
+ */
+export function exists<T>(value: T | null | undefined): value is T {
+  return isDefined(value);
+}
+
+/**
+ * Type guard to check if a value is null or undefined
+ * Opposite of isDefined
+ */
+export function isNullish<T>(value: T | null | undefined): value is null | undefined {
+  return value === null || value === undefined;
+}
+
+/**
+ * Finds an item by ID in an array with proper type narrowing
+ * Returns the item or undefined if not found
+ *
+ * @example
+ * const item = findById(storeItems, 1);
+ * if (isDefined(item)) {
+ *   console.log(item.name);
+ * }
+ */
+export function findById<T extends { id: number }>(
+  items: T[],
+  id: number
+): T | undefined {
+  return items.find(item => item.id === id);
+}
+
+/**
+ * Finds an item by ID and asserts it exists
+ * Throws an error if the item is not found
+ * Use this when you expect the item to always exist
+ *
+ * @throws {Error} If item with given ID is not found
+ *
+ * @example
+ * const item = findByIdOrThrow(storeItems, 1, 'StoreItem');
+ * // TypeScript knows item is defined here (no need to check for undefined)
+ * console.log(item.name);
+ */
+export function findByIdOrThrow<T extends { id: number }>(
+  items: T[],
+  id: number,
+  itemType: string = 'Item'
+): T {
+  const item = items.find(item => item.id === id);
+  if (!isDefined(item)) {
+    throw new Error(`${itemType} with id ${id} not found`);
+  }
+  return item;
+}
+
+/**
+ * Finds an item by ID and returns it with a fallback if not found
+ * Guarantees a non-undefined return value
+ *
+ * @example
+ * const item = findByIdOrDefault(storeItems, 1, defaultItem);
+ * // item is always defined
+ * console.log(item.name);
+ */
+export function findByIdOrDefault<T extends { id: number }>(
+  items: T[],
+  id: number,
+  defaultValue: T
+): T {
+  const item = items.find(item => item.id === id);
+  return isDefined(item) ? item : defaultValue;
+}
+
+/**
+ * Type guard to check if an item exists in an array by ID
+ * Useful for conditional logic
+ *
+ * @example
+ * if (hasItemWithId(cartItems, 5)) {
+ *   console.log('Item already in cart');
+ * }
+ */
+export function hasItemWithId<T extends { id: number }>(
+  items: T[],
+  id: number
+): boolean {
+  return items.some(item => item.id === id);
+}
+
+/**
+ * Assertion function that throws if a value is nullish
+ * Used to assert that a value exists after a .find() operation
+ *
+ * @throws {Error} If value is null or undefined
+ *
+ * @example
+ * const item = items.find(i => i.id === 1);
+ * assertDefined(item, 'Expected item to exist');
+ * // TypeScript knows item is defined after this line
+ * console.log(item.name);
+ */
+export function assertDefined<T>(
+  value: T | null | undefined,
+  message: string = 'Expected value to be defined'
+): asserts value is T {
+  if (isNullish(value)) {
+    throw new Error(message);
+  }
+}
+
+/**
+ * Type guard that checks if a StoreItem exists by ID
+ * Combines finding and type checking
+ *
+ * @example
+ * const itemOrUndefined = items.find(i => i.id === id);
+ * if (isStoreItemDefined(itemOrUndefined)) {
+ *   console.log(itemOrUndefined.name); // Safe access
+ * }
+ */
+export function isStoreItemDefined(
+  item: StoreItem | undefined
+): item is StoreItem {
+  return isDefined(item) && isStoreItem(item);
+}
+
+/**
+ * Type guard that checks if a CartItem exists by ID
+ * Combines finding and type checking
+ */
+export function isCartItemDefined(
+  item: CartItem | undefined
+): item is CartItem {
+  return isDefined(item) && isCartItem(item);
+}
