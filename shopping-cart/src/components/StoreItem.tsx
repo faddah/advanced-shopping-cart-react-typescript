@@ -1,13 +1,13 @@
 import { Button, Card } from "react-bootstrap";
 import { useShoppingCart } from "../context/ShoppingCartContext";
 import { formatCurrency } from "../utilities/formatCurrency";
+import {
+    isValidStoreItemProps,
+    type StoreItemProps as ValidatedStoreItemProps
+} from "../utilities/typeGuards";
 
-type StoreItemProps = {
-    id: number;
-    name: string;
-    price: number;
-    imgUrl: string;
-}
+// Using the validated type from typeGuards
+type StoreItemProps = ValidatedStoreItemProps;
 
 export function StoreItem({ id, name, price, imgUrl }: StoreItemProps) {
     const {
