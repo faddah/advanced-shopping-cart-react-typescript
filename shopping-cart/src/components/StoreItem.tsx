@@ -16,6 +16,15 @@ export function StoreItem(props: StoreItemProps) {
         decreaseCartQuantity,
         removeFromCart,
     } = useShoppingCart();
+
+    // Validate props at the component boundary
+    if (!isValidStoreItemProps(props)) {
+        console.error('StoreItem received invalid props:', props);
+        return null; // Don't render if props are invalid
+    }
+
+    const { id, name, price, imgUrl } = props;
+
     const quantity = getItemQuantity(id);
 
     return (
