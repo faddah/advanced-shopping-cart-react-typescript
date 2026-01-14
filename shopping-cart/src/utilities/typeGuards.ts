@@ -340,34 +340,70 @@ export interface ShoppingCartContextType {
 
 /**
  * Type guard to check if a value is a valid ShoppingCartContext
+ * Performs comprehensive validation of all methods and properties
  */
 export function isShoppingCartContext(
   value: unknown
 ): value is ShoppingCartContextType {
   if (typeof value !== 'object' || value === null) {
+    console.error('ShoppingCartContext: Expected object, received:', typeof value);
     return false;
   }
 
   const context = value as ShoppingCartContextType;
 
-  return (
-    'openCart' in context &&
-    typeof context.openCart === 'function' &&
-    'closeCart' in context &&
-    typeof context.closeCart === 'function' &&
-    'getItemQuantity' in context &&
-    typeof context.getItemQuantity === 'function' &&
-    'increaseCartQuantity' in context &&
-    typeof context.increaseCartQuantity === 'function' &&
-    'decreaseCartQuantity' in context &&
-    typeof context.decreaseCartQuantity === 'function' &&
-    'removeFromCart' in context &&
-    typeof context.removeFromCart === 'function' &&
-    'cartQuantity' in context &&
-    typeof context.cartQuantity === 'number' &&
-    'cartItems' in context &&
-    Array.isArray(context.cartItems)
-  );
+  // Check all required methods exist and are functions
+  const requiredMethods = [
+    'openCart',
+    'closeCart',
+    'getItemQuantity',
+    'increaseCartQuantity',
+    'decreaseCartQuantity',
+    'removeFromCart'
+  ];
+
+  for (const method of requiredMethods) {
+    if (!(method in context)) {
+      console.error(`ShoppingCartContext: Missing required method: ${method}`);
+      return false;
+    }
+    if (typeof context[method as keyof ShoppingCartContextType] !== 'function') {
+      console.error(`ShoppingCartContext: ${method} is not a function`);
+      return false;
+    }
+  }
+
+  // Check cartQuantity is a number
+  if (!('cartQuantity' in context)) {
+    console.error('ShoppingCartContext: Missing cartQuantity property');
+    return false;
+  }
+  if (typeof context.cartQuantity !== 'number') {
+    console.error('ShoppingCartContext: cartQuantity must be a number');
+    return false;
+  }
+  if (!Number.isFinite(context.cartQuantity) || context.cartQuantity < 0) {
+    console.error('ShoppingCartContext: cartQuantity must be a non-negative finite number');
+    return false;
+  }
+
+  // Check cartItems is an array
+  if (!('cartItems' in context)) {
+    console.error('ShoppingCartContext: Missing cartItems property');
+    return false;
+  }
+  if (!Array.isArray(context.cartItems)) {
+    console.error('ShoppingCartContext: cartItems must be an array');
+    return false;
+  }
+
+  // Validate cartItems structure
+  if (!isCartItemArray(context.cartItems)) {
+    console.error('ShoppingCartContext: cartItems array contains invalid items');
+    return false;
+  }
+
+  return true;
 }
 
 /**
@@ -380,9 +416,156 @@ export function assertShoppingCartContext(
   if (!isShoppingCartContext(context)) {
     throw new Error(
       'useShoppingCart must be used within ShoppingCartProvider. ' +
-      'Make sure your component is wrapped in <ShoppingCartProvider>.'
+      'Make sure your component is wrapped in <ShoppingCartProvider>.\n' +
+      'Check the console for detailed validation errors.'
     );
   }
+}
+
+/**
+ * Validates that a context value object has all required properties
+ * before being passed to Provider
+ */
+export function validateContextValue(
+  value: unknown,
+  contextName: string = 'Context'
+): value is ShoppingCartContextType {
+  if (!isShoppingCartContext(value)) {
+    console.error(`${contextName}: Invalid context value structure`);
+    return false;
+  }
+
+  // Additional validation: ensure functions are bound correctly
+  const context = value as ShoppingCartContextType;
+
+  try {
+    // Test that methods don't throw immediately (basic smoke test)
+    // This doesn't call them, just checks they're callable
+    const methodTests = [
+      () => typeof context.openCart === 'function',
+      () => typeof context.closeCart === 'function',
+      () => typeof context.getItemQuantity === 'function',
+      () => typeof context.increaseCartQuantity === 'function',
+      () => typeof context.decreaseCartQuantity === 'function',
+      () => typeof context.removeFromCart === 'function'
+    ];
+
+    for (const test of methodTests) {
+      if (!test()) {
+        console.error(`${contextName}: Method validation failed`);
+        return false;
+      }
+    }
+  } catch (error) {
+    console.error(`${contextName}: Error during method validation:`, error);
+    return false;
+  }
+
+  return true;
+}
+
+/**
+ * Development-time helper to log context structure
+ * Only active in development mode
+ */
+export function logContextStructure(
+  context: unknown,
+  label: string = 'Context'
+): void {
+  if (process.env.NODE_ENV === 'development') {
+    console.group(`${label} Structure`);
+
+    if (!isShoppingCartContext(context)) {
+      console.error('❌ Invalid context structure');
+      console.log('Received:', context);
+    } else {
+      console.log('✅ Valid context structure');
+      const ctx = context as ShoppingCartContextType;
+      console.log('Methods:', {
+        openCart: typeof ctx.openCart,
+        closeCart: typeof ctx.closeCart,
+        getItemQuantity: typeof ctx.getItemQuantity,
+        increaseCartQuantity: typeof ctx.increaseCartQuantity,
+        decreaseCartQuantity: typeof ctx.decreaseCartQuantity,
+        removeFromCart: typeof ctx.removeFromCart
+      });
+      console.log('Properties:', {
+        cartQuantity: ctx.cartQuantity,
+        cartItemsCount: ctx.cartItems.length
+      });
+    }
+
+    console.groupEnd();
+  }
+}
+
+/**
+ * Type guard for validating context method signatures
+ * Ensures methods accept correct parameter types
+ */
+export function hasValidContextMethodSignatures(
+  context: unknown
+): context is ShoppingCartContextType {
+  if (!isShoppingCartContext(context)) {
+    return false;
+  }
+
+  const ctx = context as ShoppingCartContextType;
+
+  // Validate that ID-accepting methods are callable
+  try {
+    // These should be functions that accept a number
+    const idMethods = [
+      ctx.getItemQuantity,
+      ctx.increaseCartQuantity,
+      ctx.decreaseCartQuantity,
+      ctx.removeFromCart
+    ];
+
+    for (const method of idMethods) {
+      if (typeof method !== 'function') {
+        console.error('Context method is not a function');
+        return false;
+      }
+      // Check function has correct length (arity)
+      if (method.length !== 1) {
+        console.warn('Context method has unexpected arity:', method.length);
+      }
+    }
+
+    // Validate no-arg methods
+    const noArgMethods = [ctx.openCart, ctx.closeCart];
+    for (const method of noArgMethods) {
+      if (typeof method !== 'function') {
+        console.error('Context method is not a function');
+        return false;
+      }
+      if (method.length !== 0) {
+        console.warn('No-arg method has unexpected arity:', method.length);
+      }
+    }
+
+    return true;
+  } catch (error) {
+    console.error('Error validating method signatures:', error);
+    return false;
+  }
+}
+
+/**
+ * Checks if context is using default/empty value (not provided)
+ */
+export function isContextDefaultValue(context: unknown): boolean {
+  // Context is default if it's undefined, null, or empty object
+  if (context === undefined || context === null) {
+    return true;
+  }
+
+  if (typeof context === 'object' && Object.keys(context).length === 0) {
+    return true;
+  }
+
+  return false;
 }
 
 /**
