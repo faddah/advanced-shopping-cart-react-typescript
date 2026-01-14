@@ -41,7 +41,13 @@ export function useLocalStorage<T>(
             }
         } catch (error) {
             console.log(`There was an Error retrieving ${key} from localStorage: ${error}`);
-            return typeof initialValue === 'function' ? (initialValue as () => T)() : initialValue;
+
+            // Use type guard for error case as well
+            if (isFunctionReturning<T>(initialValue)) {
+                return initialValue();
+            } else {
+                return initialValue;
+            }
         }
     });
 
