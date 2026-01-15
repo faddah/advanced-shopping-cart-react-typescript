@@ -472,7 +472,7 @@ export function logContextStructure(
   context: unknown,
   label: string = 'Context'
 ): void {
-  if (process.env.NODE_ENV === 'development') {
+  if (import.meta.env.DEV) {
     console.group(`${label} Structure`);
 
     if (!isShoppingCartContext(context)) {
