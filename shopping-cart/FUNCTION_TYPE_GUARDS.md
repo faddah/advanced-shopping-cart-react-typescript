@@ -175,7 +175,7 @@ if (isAsyncFunction<number>(asyncFunc)) {
 **What it checks:**
 
 - ✅ Value is an async function
-- ✅ Returns Promise<T>
+- ✅ Returns `Promise<T>`
 
 **Use case:** Handling mixed sync/async operations
 
