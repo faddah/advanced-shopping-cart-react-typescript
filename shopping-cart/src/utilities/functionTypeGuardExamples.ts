@@ -293,10 +293,9 @@ export function example8_ResolveValue() {
     const lazyConfig: () => Config = () => ({ timeout: 5000, retries: 3 });
 
     // WITHOUT helper - manual type checking
-    const config1 = typeof directConfig === 'function'
-        ? directConfig()
-        : directConfig;
-;
+    const config1 = typeof lazyConfig === 'function'
+        ? lazyConfig()
+        : lazyConfig;
 
     // WITH helper - clean and simple
     
